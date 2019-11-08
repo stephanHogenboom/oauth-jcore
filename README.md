@@ -1,0 +1,1 @@
+Oauth try out application for te java magazine session @ Jcore
