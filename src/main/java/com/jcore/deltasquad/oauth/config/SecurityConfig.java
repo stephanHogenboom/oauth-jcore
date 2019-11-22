@@ -18,7 +18,7 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Value("${auth0.audience}")
-    private String audience;
+    private String auth0Audience;
 
     @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
     private String issuer;
@@ -28,7 +28,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         NimbusJwtDecoder decoder = (NimbusJwtDecoder) JwtDecoders.fromOidcIssuerLocation(issuer);
         //   decoder = (NimbusJwtDecoderJwkSupport) JwtDecoders.fromOidcIssuerLocation(issuer);
 
-        OAuth2TokenValidator<Jwt> audienceValidator = new AudienceValidator(audience);
+        OAuth2TokenValidator<Jwt> audienceValidator = new AudienceValidator(auth0Audience);
         OAuth2TokenValidator<Jwt> withIssuer = JwtValidators.createDefaultWithIssuer(issuer);
         OAuth2TokenValidator<Jwt> withAudience = new DelegatingOAuth2TokenValidator<>(withIssuer, audienceValidator);
 
@@ -43,8 +43,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .mvcMatchers("/yolo/public").permitAll()
                 .mvcMatchers("/yolo/private").authenticated()
-                .mvcMatchers("/yolo/private-scoped").hasAuthority("SCOPE_read:yolo")
+                .mvcMatchers("/yolo/private-scoped").hasAuthority("SCOPE_read:users")  ///TODO kan ook met @Value uiteraard
                 .and()
-                .oauth2ResourceServer().jwt();
+                .oauth2Login()
+                .and()
+                .oauth2ResourceServer().jwt()
+                .and();
     }
 }

@@ -20,6 +20,6 @@ public class YoloEndpoint {
 
     @GetMapping("/private-scoped")
     public String getPrivateScopedYolo() {
-        return "Super private Yolo!";
+        return "Super private Yolo met scope read_user!";
     }
 }
